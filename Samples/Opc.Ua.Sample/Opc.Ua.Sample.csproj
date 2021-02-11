@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(LibTargetFrameworks)</TargetFrameworks>
+    <AssemblyName>Opc.Ua.Sample</AssemblyName>
+    <LangVersion>6</LangVersion>
+    <PackageId>Opc.Ua.Sample</PackageId>
+    <RootNamespace>Opc.Ua.Sample</RootNamespace>
+    <Description>OPC UA Sample Class Library</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\TestData.PredefinedNodes.uanodes;MemoryBuffer\MemoryBuffer.PredefinedNodes.uanodes;Boiler\Boiler.PredefinedNodes.uanodes" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
+    <Reference Include="System.IdentityModel" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\UA-.NETStandard\Libraries\Opc.Ua.Server\Opc.Ua.Server.csproj" />
+  </ItemGroup>
+
+</Project>

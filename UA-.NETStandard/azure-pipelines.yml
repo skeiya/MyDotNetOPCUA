@@ -1,0 +1,67 @@
+# Azure pipeline
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+pr: 
+  autoCancel: 'true'
+  branches:
+    include:
+    - '*'
+  paths:
+    include:
+    - '*' 
+    exclude:
+    - 'Docs/*' 
+    - 'README.md' 
+
+stages:
+- stage: build
+  displayName: 'Build .Net Core Samples'
+  jobs:
+  - template: .azurepipelines/ci.yml
+- stage: buildnohttps
+  dependsOn: []
+  displayName: 'Build NoHttps .Net Core Samples'
+  jobs:
+  - template: .azurepipelines/ci.yml
+    parameters:
+      buildoption: '-p:NoHttps=true'
+      agents: '@{ linux = "ubuntu-18.04" }'
+- stage: solutions
+  dependsOn: []
+  displayName: 'Build Solutions'
+  jobs:
+  - template: .azurepipelines/sln.yml
+- stage: testrelease
+  dependsOn: []
+  displayName: 'Test Core and SDK Release'
+  jobs:
+  - template: .azurepipelines/test.yml
+    parameters:
+      configuration: Release
+      framework: net462
+      agents: '@{ windows = "windows-2019" }'
+      jobnamesuffix: net462
+  - template: .azurepipelines/test.yml
+    parameters:
+      framework: netcoreapp2.1
+      configuration: Release
+  - template: .azurepipelines/test.yml
+    parameters:
+      configuration: Release
+      framework: netcoreapp3.1
+      agents: '@{ windows = "windows-2019"; mac = "macOS-10.15" }'
+      jobnamesuffix: core3
+  - template: .azurepipelines/testcc.yml
+    parameters:
+      configuration: Release
+      poolImage: 'ubuntu-18.04'
+      jobnamesuffix: netcore31
+- stage: testdebug
+  dependsOn: []
+  displayName: 'Test Core and SDK Debug'
+  jobs:
+  - template: .azurepipelines/test.yml
+    parameters:
+      framework: netcoreapp3.1
+      configuration: Debug
